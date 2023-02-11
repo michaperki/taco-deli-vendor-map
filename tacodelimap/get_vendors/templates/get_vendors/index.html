@@ -1,7 +1,9 @@
+<h2>Enter your address or zipcode</h2>
+<input type="text">
 {% if latest_vendor_list %}
     <ul>
     {% for vendor in latest_vendor_list %}
-        <li><a href="/get_vendors/{{ vendor.id }}/">{{ vendor.name }}</a></li>
+        <li><a href="{% url 'get_vendors:detail' vendor.id %}">{{ vendor.name }}</a></li>
     {% endfor %}
     </ul>
 {% else %}

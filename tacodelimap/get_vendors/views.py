@@ -1,7 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404 ,render
 
-from django.http import HttpResponse
-from django.template import loader
+from django.http import HttpResponse, Http404
 
 import requests
 from bs4 import BeautifulSoup
@@ -16,12 +15,8 @@ from geopy.distance import geodesic
 
 def index(request):
     latest_vendor_list = Vendor.objects.order_by('name')
-    template = loader.get_template('get_vendors/index.html')
-    context = {
-        'latest_vendor_list': latest_vendor_list,
-    }
-    return HttpResponse(template.render(context, request))
-
+    context = {'latest_vendor_list': latest_vendor_list}
+    return render(request, 'get_vendors/index.html', context)
 
 def get_list_of_vendors():
     # Get the data from the website
@@ -37,15 +32,23 @@ def get_list_of_vendors():
     df = df.reset_index(drop=True)
     return df
 
+def validate_address(address):
+    if address is None:
+        return False
+    if "Austin" in address:
+        return True
+    return False
+
 def get_vendor_address(vendor):
     geolocator = Nominatim(user_agent="tacodeli")
     try:
         location = geolocator.geocode(vendor)
     except:
         location = None
-    if location is None:
+    if validate_address(location.address):
+        return location.address
+    else:
         return np.nan
-    return location.address
 
 def create_vendor(df):
     for index, row in df.iterrows():
@@ -55,7 +58,8 @@ def create_vendor(df):
         vendor.save()
 
 def detail(request, vendor_id):
-    return HttpResponse("You're looking at vendor %s." % vendor_id)
+    vendor = get_object_or_404(Vendor, pk=vendor_id)
+    return render(request, 'get_vendors/detail.html', {'vendor': vendor})
 
 def distance(request, vendor_id):
     response = "You're looking at the distance to vendor %s."
