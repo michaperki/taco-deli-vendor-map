@@ -45,10 +45,13 @@ def get_vendor_address(vendor):
         location = geolocator.geocode(vendor)
     except:
         location = None
-    if validate_address(location.address):
-        return location.address
-    else:
+    if location is None:
         return np.nan
+    else: 
+        if validate_address(location.address):
+            return location.address
+        else:
+            return np.nan
 
 def create_vendor(df):
     for index, row in df.iterrows():
@@ -67,3 +70,4 @@ def distance(request, vendor_id):
 
 def hours(request, vendor_id):
     return HttpResponse("You're looking at the hours of %s." % vendor_id)
+
