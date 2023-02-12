@@ -13,6 +13,8 @@ import numpy as np
 from geopy.geocoders import Nominatim
 from geopy.distance import geodesic
 
+import re
+
 def index(request):
     latest_vendor_list = Vendor.objects.order_by('name')
     context = {'latest_vendor_list': latest_vendor_list}
@@ -53,11 +55,25 @@ def get_vendor_address(vendor):
         else:
             return np.nan
 
+def get_vendor_zip(address):
+    if address is None:
+        return np.nan
+    else:
+        # extract the zip code from the address by
+        # detecting a string of 5 digits
+        # and then returning the 5 digits
+        try:
+            zip_code = re.search(r'\d{5}', address).group()
+        except:
+            zip_code = np.nan
+        return zip_code
+
 def create_vendor(df):
     for index, row in df.iterrows():
         vendor_name = row["Vendors"]
         address = get_vendor_address(vendor_name)
-        vendor = Vendor(name=vendor_name, address=address)
+        zip_code = get_vendor_zip(address)
+        vendor = Vendor(name=vendor_name, address=address, zip_code=zip_code)
         vendor.save()
 
 def detail(request, vendor_id):

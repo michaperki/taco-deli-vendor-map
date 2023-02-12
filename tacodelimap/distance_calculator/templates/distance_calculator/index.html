@@ -1,0 +1,9 @@
+{% if latest_distance_list %}
+    <ul>
+    {% for vendor_zipcode in latest_distance_list %}
+        <li><a href="/get_distance/{{ vendor_zipcode.id }}/">(link) {{ vendor_zipcode.distance }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No distance available are available.</p>
+{% endif %}
