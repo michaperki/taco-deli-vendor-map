@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path('get_distance/', include('distance_calculator.urls')),
     path('zipcode/', include('zipcode.urls')),
     path('get_vendors/', include('get_vendors.urls')),
     path('admin/', admin.site.urls),

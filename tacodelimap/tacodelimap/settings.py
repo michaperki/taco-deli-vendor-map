@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'distance_calculator.apps.DistanceCalculatorConfig',
     'zipcode.apps.ZipcodeConfig',
     'get_vendors.apps.GetVendorsConfig',
     'django.contrib.admin',
